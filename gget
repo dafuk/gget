@@ -1,11 +1,8 @@
 #!/bin/bash 
-# written by Ben (https://github.com/dafuk) on a Friday afternoon, because bash is awesome
 APPNAME="gget"
 GDLINK='https://drive.google.com/uc?export=download&id='
 CFILE="/tmp/${APPNAME}_$$_bisquit"
 HFILE="/tmp/${APPNAME}_$$_markup"
-
-
 
 get_confirm_id()
 {
@@ -21,7 +18,7 @@ actualget()
 
 cleanup()
 {
-	rm -rf $CFILE
+	rm -rf $CFILE $HFILE
 }
 
 
@@ -39,3 +36,5 @@ case $1 in
 	;;
 
 esac
+
+
