@@ -1,0 +1,41 @@
+#!/bin/bash 
+# written by Ben (https://github.com/dafuk) on a Friday afternoon, because bash is awesome
+APPNAME="gget"
+GDLINK='https://drive.google.com/uc?export=download&id='
+CFILE="/tmp/${APPNAME}_$$_bisquit"
+HFILE="/tmp/${APPNAME}_$$_markup"
+
+
+
+get_confirm_id()
+{
+	echo $(wget --quiet --save-cookies $CFILE --keep-session-cookies --no-check-certificate "${GDLINK}${DLID}" -O- | tee $HFILE | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
+}
+actualget()
+{
+	cat $HFILE | sed "s#.*script##g" | egrep -v 'position|import'| sed -r 's#^.*<a href="([^"]+)">([^<]+)</a>.*$#\1\t\2#' | while read xlink REALFILE; do
+        echo "Downloading $REALFILE from $DLID"	
+	wget --load-cookies $CFILE "${GDLINK}${DLID}&confirm=$CONFIRM" -O $REALFILE
+	done
+}
+
+cleanup()
+{
+	rm -rf $CFILE
+}
+
+
+case $1 in
+	help)
+		echo -n "\nIt's so straightforward, I'm scared you might have no idea how to breathe"
+		exit 6666
+	;;
+
+	*)
+		DLID=$1
+		CONFIRM=$(get_confirm_id)
+		actualget
+		cleanup
+	;;
+
+esac
